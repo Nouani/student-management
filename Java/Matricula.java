@@ -1,14 +1,14 @@
 public class Matricula
 {
 	private int ra;
-	private int cod;
+	private int codDisciplina;
 	private double nota;
 	private double frequencia;
 
-	public Matricula(int ra, int cod, double nota, double frequencia)
+	public Matricula(int ra, int codDisciplina, double nota, double frequencia)
 	{
 		this.setRa(ra);
-		this.setCod(cod);
+		this.setCodDisciplina(codDisciplina);
 		this.setNota(nota);
 		this.setFrequencia(frequencia);
 	}
@@ -17,9 +17,9 @@ public class Matricula
 	{
 		return this.ra;
 	}
-	public int getCod()
+	public int getCodDisciplina()
 	{
-		return this.cod;
+		return this.codDisciplina;
 	}
 	public double getNota()
 	{
@@ -36,11 +36,11 @@ public class Matricula
 			throw new Exception("Ra Inválido!");
 		this.ra = ra;
 	}
-	public void setCod(int cod)
+	public void setCodDisciplina(int codDisciplina)
 	{
-		if (cod < 0)
+		if (codDisciplina < 0)
 			throw new Exception("Código Inválido!");
-		this.cod = cod;
+		this.codDisciplina = codDisciplina;
 	}
 	public void setNota(double nota)
 	{
@@ -59,7 +59,7 @@ public class Matricula
 	{
 		String ret = "Matricula: " + "\n";
 		ret += "RA: " + this.getRa() + "\n";
-		ret += "Código d@: " + this.getCod() + "\n";
+		ret += "Código da Disciplina: " + this.getCodDisciplina() + "\n";
 		ret += "Nota na Disciplina: " + this.getNota() + "\n";
 		ret += "Frequência na Disciplina: " + this.getFrequencia() + "\n";
 		return ret;
@@ -69,7 +69,7 @@ public class Matricula
 	{
 		int ret = 777;
 		ret += ret*13 + new Integer(this.ra).hashCode();
-		ret += ret*13 + new Integer(this.cod).hashCode();
+		ret += ret*13 + new Integer(this.codDisciplina).hashCode();
 		ret += ret*13 + new Double(this.nota).hashCode();
 		ret += ret*13 + new Double(this.frequencia).hashCode();
 
@@ -89,7 +89,7 @@ public class Matricula
 			return false;
 
 		Matricula mat = (Matricula)obj;
-		if(mat.ra != this.ra && mat.cod != this.cod)
+		if(mat.ra != this.ra && mat.codDisciplina != this.codDisciplina)
 			return false;
 
 		return true;

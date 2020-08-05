@@ -30,7 +30,12 @@ app.post('/resultados', async (req, res) => {
 
     const matriculaExists = await execSQLQuery(`select * from Matriculas where RA = ${ra} and cod = ${codDisciplina}`);
     if (matriculaExists.recordset.length === 0) {
-        return res.status(404).json({ error: `O aluno de RA: ${ra} não está matriculado na disciplina de código: ${codDisciplina}` });
+        return res.status(400).json({ error: `O aluno de RA: ${ra} não está matriculado na disciplina de código: ${codDisciplina}` });
+    }
+
+    const resultadoExists = await execSQLQuery(`select * from Resultados where RA = ${ra} and cod = ${codDisciplina}`);
+    if (resultadoExists.recordset.length != 0) {
+        return res.status(400).json({ error: `O aluno de RA: ${ra} já finalizou a disciplina de código: ${codDisciplina}`});
     }
 
     await execSQLQuery(`delete from Matriculas where RA = ${ra} and cod = ${codDisciplina}`);

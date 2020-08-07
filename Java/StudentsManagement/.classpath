@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/User/Desktop/COTUCA/1º SEMESTRE/ESTRUTURAS DE DADOS 1/GERENCIAMENTO DE ALUNOS/student-management/Java/jackson-all-1.9.0.jar"/>
+	<classpathentry kind="lib" path="E:/Nouani/Programacao/Projetos/student-management/Java/jackson-all-1.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

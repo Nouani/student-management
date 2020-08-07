@@ -31,10 +31,11 @@ import java.awt.event.ActionEvent;
 
 public class ProgramaPrincipal extends JFrame 
 {
-
 	private JPanel contentPane;
 	private JTextField txtRA;
 	private JTextField txtCod;
+	private JSpinner spnNota;
+	JSpinner spnFreq;
 	private Fila<Resultado> filaResultados = new Fila<Resultado>();
 
 	public static void main(String[] args) 
@@ -98,7 +99,7 @@ public class ProgramaPrincipal extends JFrame
 		lblNota.setBounds(64, 140, 72, 14);
 		panel_1.add(lblNota);
 		
-		JSpinner spnNota = new JSpinner();
+		spnNota = new JSpinner();
 		spnNota.setModel(new SpinnerNumberModel(0, 0, 10, 1));
 		spnNota.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		spnNota.setBounds(290, 137, 103, 20);
@@ -116,7 +117,7 @@ public class ProgramaPrincipal extends JFrame
 		lblFrequncia.setBounds(64, 184, 135, 20);
 		panel_1.add(lblFrequncia);
 		
-		JSpinner spnFreq = new JSpinner();
+		spnFreq = new JSpinner();
 		spnFreq.setModel(new SpinnerNumberModel(0.0, 0.0, 1.0, 0.1));
 		spnFreq.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		spnFreq.setBounds(290, 184, 103, 20);
@@ -151,13 +152,6 @@ public class ProgramaPrincipal extends JFrame
                     ex.printStackTrace();
 				}
 			}
-
-			private void LimparCampos() {
-				txtRA.setText("");
-				txtCod.setText("");
-				spnNota.setValue(0);
-				spnFreq.setValue(0);
-			}
 		});
 		btnDefinir.setToolTipText("Armazena os dados especificados - N\u00E3o adiciona automaticamente, \u00E9 necess\u00E1rio confirmar o procedimento atrav\u00E9s do outro bot\u00E3o!");
 		btnDefinir.setFont(new Font("Times New Roman", Font.PLAIN, 20));
@@ -169,35 +163,8 @@ public class ProgramaPrincipal extends JFrame
 										+  "       Aluno(s)     </center></html>");
 		btnConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				EnviarParaAPI();
-				Listagem listagem = new Listagem();
-				listagem.setVisible(true);
-				
-			}
-
-			private void EnviarParaAPI() {
-				Fila filaClone = (Fila)filaResultados.clone();
-				Fila<String> resultados = new Fila<String>();
-				while(!filaResultados.isVazia())
-				{
-					System.out.println(filaResultados.getQtd());
-					try {
-						int res = (int) ClienteWS.postObjeto(filaResultados.recupereUmItem(), Integer.class, "http://localhost:3333/resultados");
-						filaResultados.removaUmItem();
-						
-						if(res == 404)
-							resultados.guardeUmItem("nao");
-						else
-							resultados.guardeUmItem("sim");
-						
-		            } catch (Exception ex) {
-		            	JOptionPane.showMessageDialog(null, ex.getMessage());
-	                    ex.printStackTrace();
-		            }
-				}
-			}
-				
+			}	
 		});
 		
 		btnConfirmar.setToolTipText("Confirma Todos os Resultados adicionados nesta sess\u00E3o e registra no banco");
@@ -224,5 +191,37 @@ public class ProgramaPrincipal extends JFrame
 				
 			}
 		});
+	}
+	
+	private void EnviarParaAPI() {
+		Fila filaClone = (Fila)filaResultados.clone();
+		Fila<String> resultados = new Fila<String>();
+		while(!filaResultados.isVazia())
+		{
+			System.out.println(this.filaResultados.getQtd());
+			try {
+				int res = (int) ClienteWS.postObjeto(this.filaResultados.recupereUmItem(), Integer.class, "http://localhost:3333/resultados");
+				this.filaResultados.removaUmItem();
+				
+				if(res == 404)
+					resultados.guardeUmItem("Não");
+				else if (res == 200)
+					resultados.guardeUmItem("Sim");
+				
+            } catch (Exception ex) {
+            	JOptionPane.showMessageDialog(null, ex.getMessage());
+                ex.printStackTrace();
+            }
+		}
+		
+		Listagem listagem = new Listagem(filaClone, resultados);
+		listagem.setVisible(true);
+	}
+	
+	private void LimparCampos() {
+		txtRA.setText("");
+		txtCod.setText("");
+		spnNota.setValue(0);
+		spnFreq.setValue(0);
 	}
 }

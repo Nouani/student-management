@@ -20,29 +20,29 @@ app.post('/resultados', async (req, res) => {
 
     const alunoExists = await execSQLQuery(`select * from Alunos where RA = ${ra}`);
     if (alunoExists.recordset.length === 0) {
-        return res.status(400).json({ error: 'RA inválido' })
+        return res.json(404)
     }
 
     const disciplinaExists = await execSQLQuery(`select * from Disciplinas where cod = ${codDisciplina}`);
     if (disciplinaExists.recordset.length === 0) {
-        return res.status(400).json({ error: 'Código de disciplina inválido' })
+        return res.json(404)
     }
 
     const matriculaExists = await execSQLQuery(`select * from Matriculas where RA = ${ra} and cod = ${codDisciplina}`);
     if (matriculaExists.recordset.length === 0) {
-        return res.status(400).json({ error: `O aluno de RA: ${ra} não está matriculado na disciplina de código: ${codDisciplina}` });
+        return res.json(404)
     }
 
     const resultadoExists = await execSQLQuery(`select * from Resultados where RA = ${ra} and cod = ${codDisciplina}`);
     if (resultadoExists.recordset.length != 0) {
-        return res.status(400).json({ error: `O aluno de RA: ${ra} já finalizou a disciplina de código: ${codDisciplina}`});
+        return res.json(404)
     }
 
     await execSQLQuery(`delete from Matriculas where RA = ${ra} and cod = ${codDisciplina}`);
 
     await execSQLQuery(`insert into Resultados values (${ra}, ${codDisciplina}, ${nota}, ${frequencia})`);
 
-    return res.json();
+    return res.json(200);
 });
 
 app.listen('3333', () => {

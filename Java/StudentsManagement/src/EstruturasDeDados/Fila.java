@@ -18,6 +18,11 @@ public class Fila <X>
 
         this.elementos.insiraNoFim (x);
     }
+    
+    public int getQtd()
+    {
+    	return this.elementos.getQtd();
+    }
 
     public X recupereUmItem () throws Exception
     {

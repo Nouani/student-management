@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JList;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Listagem extends JFrame 
 {
@@ -34,6 +36,18 @@ public class Listagem extends JFrame
 
 	public Listagem() 
 	{
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				
+				FazerListagem()
+			}
+
+			private void FazerListagem() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();

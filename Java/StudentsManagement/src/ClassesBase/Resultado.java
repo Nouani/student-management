@@ -1,13 +1,13 @@
 package ClassesBase;
 
-public class Matricula
+public class Resultado
 {
 	private int ra;
 	private int codDisciplina;
 	private double nota;
 	private double frequencia;
 
-	public Matricula(int ra, int codDisciplina, double nota, double frequencia) throws Exception
+	public Resultado(int ra, int codDisciplina, double nota, double frequencia) throws Exception
 	{
 		this.setRa(ra);
 		this.setCodDisciplina(codDisciplina);
@@ -59,7 +59,7 @@ public class Matricula
 
 	public String toString()
 	{
-		String ret = "Matricula: " + "\n";
+		String ret = "Resultado: " + "\n";
 		ret += "RA: " + this.getRa() + "\n";
 		ret += "Código da Disciplina: " + this.getCodDisciplina() + "\n";
 		ret += "Nota na Disciplina: " + this.getNota() + "\n";
@@ -90,7 +90,7 @@ public class Matricula
 		if(obj.getClass()!=this.getClass())
 			return false;
 
-		Matricula mat = (Matricula)obj;
+		Resultado mat = (Resultado)obj;
 		if(mat.ra != this.ra && mat.codDisciplina != this.codDisciplina)
 			return false;
 

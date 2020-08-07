@@ -1,6 +1,7 @@
 package Telas;
 
 import ClassesBase.*;
+import EstruturasDeDados.*;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
@@ -8,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.SystemColor;
@@ -30,6 +33,9 @@ public class ProgramaPrincipal extends JFrame
 {
 
 	private JPanel contentPane;
+	private JTextField txtRA;
+	private JTextField txtCod;
+	private Fila<Resultado> filaResultados = new Fila<Resultado>();
 
 	public static void main(String[] args) 
 	{
@@ -80,21 +86,11 @@ public class ProgramaPrincipal extends JFrame
 		lblRa.setBounds(64, 44, 46, 14);
 		panel_1.add(lblRa);
 		
-		JComboBox cbRA = new JComboBox();
-		cbRA.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		cbRA.setBounds(290, 41, 103, 20);
-		panel_1.add(cbRA);
-		
 		JLabel lblCdigoDaDisciplina = new JLabel("C\u00F3digo da Disciplina: ");
 		lblCdigoDaDisciplina.setToolTipText("C\u00F3digo da determinada Disciplina Escolar");
 		lblCdigoDaDisciplina.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		lblCdigoDaDisciplina.setBounds(64, 86, 187, 24);
 		panel_1.add(lblCdigoDaDisciplina);
-		
-		JComboBox cbCod = new JComboBox();
-		cbCod.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		cbCod.setBounds(290, 88, 64, 20);
-		panel_1.add(cbCod);
 		
 		JLabel lblNota = new JLabel("Nota: ");
 		lblNota.setToolTipText("Nota do Aluno nesta Disciplina");
@@ -139,18 +135,28 @@ public class ProgramaPrincipal extends JFrame
 			{
 				try
 				{
-					int ra = (int)cbRA.getSelectedItem();
-					int cod = (int)cbCod.getSelectedItem();
-					double nota = (double)spnNota.getValue();
-					double freq = (double)spnFreq.getValue();
+					int ra = Integer.parseInt(txtRA.getText());
+					int cod = Integer.parseInt(txtCod.getText());
+					double nota = Double.parseDouble(spnNota.getValue().toString());
+					double freq = Double.parseDouble(spnFreq.getValue().toString());
 					
-					Matricula matricula = new Matricula(ra, cod, nota, freq);
-					ClienteWS.postObjeto(matricula, Matricula.class, "http://localhost:3333/resultados");
+					Resultado resultado = new Resultado(ra, cod, nota, freq);
+					
+					filaResultados.guardeUmItem(resultado);
+					LimparCampos();														
 				}
 				catch(Exception ex)
 				{
-					
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+                    ex.printStackTrace();
 				}
+			}
+
+			private void LimparCampos() {
+				txtRA.setText("");
+				txtCod.setText("");
+				spnNota.setValue(0);
+				spnFreq.setValue(0);
 			}
 		});
 		btnDefinir.setToolTipText("Armazena os dados especificados - N\u00E3o adiciona automaticamente, \u00E9 necess\u00E1rio confirmar o procedimento atrav\u00E9s do outro bot\u00E3o!");
@@ -161,24 +167,61 @@ public class ProgramaPrincipal extends JFrame
 		JButton btnConfirmar = new JButton("<html><center>Confirmar Resultados<br>"
 										+  "        do(s)       <br>"
 										+  "       Aluno(s)     </center></html>");
+		btnConfirmar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				EnviarParaAPI();
+				Listagem listagem = new Listagem();
+				listagem.setVisible(true);
+				
+			}
+
+			private void EnviarParaAPI() {
+				Fila filaClone = (Fila)filaResultados.clone();
+				Fila<String> resultados = new Fila<String>();
+				while(!filaResultados.isVazia())
+				{
+					System.out.println(filaResultados.getQtd());
+					try {
+						int res = (int) ClienteWS.postObjeto(filaResultados.recupereUmItem(), Integer.class, "http://localhost:3333/resultados");
+						filaResultados.removaUmItem();
+						
+						if(res == 404)
+							resultados.guardeUmItem("nao");
+						else
+							resultados.guardeUmItem("sim");
+						
+		            } catch (Exception ex) {
+		            	JOptionPane.showMessageDialog(null, ex.getMessage());
+	                    ex.printStackTrace();
+		            }
+				}
+			}
+				
+		});
+		
 		btnConfirmar.setToolTipText("Confirma Todos os Resultados adicionados nesta sess\u00E3o e registra no banco");
 		btnConfirmar.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		btnConfirmar.setBounds(449, 148, 243, 78);
 
 		panel_1.add(btnConfirmar);
 		
+		txtRA = new JTextField();
+		txtRA.setBounds(290, 43, 96, 20);
+		panel_1.add(txtRA);
+		txtRA.setColumns(10);
+		
+		txtCod = new JTextField();
+		txtCod.setBounds(290, 90, 96, 20);
+		panel_1.add(txtCod);
+		txtCod.setColumns(10);
+		
 		addWindowListener(new WindowAdapter() 
 		{
 			@Override
 			public void windowOpened(WindowEvent arg0) 
 			{
-				Alunos[] alunos = (Alunos[])ClienteWS.getObjeto(Alunos.class, "http://localhost:3333/alunos");
-				for(int i = 0; i < alunos.length; i++)
-					cbRA.addItem(alunos[i].getRa());
 				
-				Disciplinas[] disc = (Disciplinas[])ClienteWS.getObjeto(Disciplinas.class, "http://localhost:3333/disciplinas");
-				for(int i = 0; i < disc.length; i++)
-					cbCod.addItem(disc[i].getCod());
 			}
 		});
 	}

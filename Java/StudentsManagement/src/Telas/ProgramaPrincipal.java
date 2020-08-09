@@ -144,6 +144,7 @@ public class ProgramaPrincipal extends JFrame
 					Resultado resultado = new Resultado(ra, cod, nota, freq);
 					
 					filaResultados.guardeUmItem(resultado);
+					JOptionPane.showMessageDialog(null, "ADICIONADO!", "Resultado do Aluno", JOptionPane.INFORMATION_MESSAGE);
 					LimparCampos();														
 				}
 				catch(Exception ex)
@@ -194,11 +195,11 @@ public class ProgramaPrincipal extends JFrame
 	}
 	
 	private void EnviarParaAPI() {
-		Fila filaClone = (Fila)filaResultados.clone();
+		Fila<Resultado> filaClone = (Fila<Resultado>)filaResultados.clone();
 		Fila<String> resultados = new Fila<String>();
 		while(!filaResultados.isVazia())
 		{
-			System.out.println(this.filaResultados.getQtd());
+			//System.out.println(this.filaResultados.getQtd());
 			try {
 				int res = (int) ClienteWS.postObjeto(this.filaResultados.recupereUmItem(), Integer.class, "http://localhost:3333/resultados");
 				this.filaResultados.removaUmItem();

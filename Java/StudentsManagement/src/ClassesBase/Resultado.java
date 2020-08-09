@@ -34,7 +34,7 @@ public class Resultado
 
 	public void setRa(int ra) throws Exception
 	{
-		if (ra < 0)
+		if (ra < 10000 || ra > 99999)
 			throw new Exception("Ra Inválido!");
 		this.ra = ra;
 	}
@@ -95,5 +95,29 @@ public class Resultado
 			return false;
 
 		return true;
+	}
+	
+	public Resultado(Resultado modelo) throws Exception
+	{
+		if (modelo==null)
+			throw new Exception("Modelo Inválido");
+		
+		this.ra = modelo.ra;
+		this.codDisciplina = modelo.codDisciplina;
+		this.nota = modelo.nota;
+		this.frequencia = modelo.frequencia;
+	}
+	
+	public Object clone()
+	{
+		Resultado ret = null;
+		
+		try
+		{
+			ret = new Resultado(this);
+		}
+		catch(Exception ignore) {}
+		
+		return ret;
 	}
 }
